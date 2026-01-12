@@ -13,7 +13,7 @@
 TLRFinder is a tools desgined to detect and analyse **T**elomere-**L**inked-**R**epeats (TLR)
 
 TLRs are, as the name describes, regions adjacent to telomeres that are conserved across chromosome ends <br/>
-The most commonly described version contains Telomere-Linked-Helicases, such as the Y' element in _S. cerevisiae_ <br/>
+The most commonly described version contains Helicases, such as the Y' element in _S. cerevisiae_, and Telomere-Linked-Helicases (TLHs) <br/>
 However other coding sequences also exist within TLRs and are also conserved across diverse fungi <br/>
 With the advent of Long-read sequencing we now have an increasing number of well assembled genomes with the subtelomeres intact <br/>
 Therefore we are now primed for looking at the TLRs and their evolution.
