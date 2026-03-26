@@ -49,10 +49,10 @@ This tool was developed for [O'Donnell et al. 2025]() (please cite this publicat
 
     Optional parameters:
     -w | --window       Number of basepairs for window averaging for coverage (Default: 10)
-    -s | --slide        Number of basepairs for the window to slide for coverage (Default: 5)
+    -s | --slideNumber of basepairs for the window to slide for coverage (Default: 5)
     -p | --prefix       Prefix for output (Default: TLRFinder)
     -o | --output       Name of output folder for all results (default: TLRFinder_output)
-    -h | --help         Print this help message
+    -h | --help Print this help message
 
 
 
@@ -112,30 +112,32 @@ All you need to know is the coordinates for one of the repeats (will be consider
 For Example: I extracted a secondary repeat in the assembly 'GCA030345115.fa' from contig 'GCA030345115_CP128282.1' between position 2 and 9881 (GCA030345115_CP128282.1:2-9881) <br/>
 In my run of TLRFinder on 'GCA030345115.fa', the prefix was GCA030345115 and therefore in the TLRFinder output folder I ran the below to add the secondary repeat:
 
-        ##my run of TLRFinder commented out
-        #TLRFinder -a GCA030345115.fa -p GCA030345115 -o GCA030345115_TLRFinder_output
-        
-        prefix="GCA030345115"
-        assembly="GCA030345115.fa"
-        coords="GCA030345115_CP128282.1:2-9881"
+```bash
+##my run of TLRFinder commented out
+#TLRFinder -a GCA030345115.fa -p GCA030345115 -o GCA030345115_TLRFinder_output
 
-        ##move into the TLRFinder output for 'GCA030345115.fa'
-        cd GCA030345115_TLRFinder_output/
-        
-        ##manually extract the second repeat for ${prefix} based on using the synteny alignment script (only the primary repeat was found previously)
-        samtools faidx ${assembly} ${coords} > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.fa
-        ##get the positions of this second repeat in the contig ends
-        blastn  -subject contig_ends/${prefix}.${tipsize2}kb_ends.fa -query subtelomeric_repeats/${prefix}.manual_second.repeat_rep.fa  -outfmt 6 > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.ends_blast.tsv
-        ##create bed from nonredundant positions (used for plotting)
-        echo "contig;start;end" | tr ';' '\t' > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.ends_blast.bed
-        cat subtelomeric_repeats/${prefix}.manual_second.repeat_rep.ends_blast.tsv | awk '{if($3 > 80 && $4 > 500) print}' | awk '{print $2"\t"$9"\t"$10}' | awk '{if($2>$3) {print $1"\t"$3"\t"$2} else {print}}' | sort -k1,1 -k2,2n | bedtools merge -d 10  >> subtelomeric_repeats/${prefix}.manual_second.repeat_rep.ends_blast.bed
-        ##and the same now for the whole genome
-        blastn  -subject assemblies/${prefix}.fa -query subtelomeric_repeats/${prefix}.manual_second.repeat_rep.fa  -outfmt 6 > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.WG_blast.tsv
-        echo "contig;start;end" | tr ';' '\t' > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.WG_blast.bed
-        cat subtelomeric_repeats/${prefix}.manual_second.repeat_rep.WG_blast.tsv | awk '{if($3 > 80 && $4 > 500) print}' | awk '{print $2"\t"$9"\t"$10}' | awk '{if($2>$3) {print $1"\t"$3"\t"$2} else {print}}' | sort -k1,1 -k2,2n | bedtools merge -d 10 >> subtelomeric_repeats/${prefix}.manual_second.repeat_rep.WG_blast.bed
+prefix="GCA030345115"
+assembly="GCA030345115.fa"
+coords="GCA030345115_CP128282.1:2-9881"
 
-        ##Now you can plot both side by side
+##move into the TLRFinder output for 'GCA030345115.fa'
+cd GCA030345115_TLRFinder_output/
 
+##manually extract the second repeat for ${prefix} based on using the synteny alignment script (only the primary repeat was found previously)
+samtools faidx ${assembly} ${coords} > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.fa
+##get the positions of this second repeat in the contig ends
+blastn  -subject contig_ends/${prefix}.${tipsize2}kb_ends.fa -query subtelomeric_repeats/${prefix}.manual_second.repeat_rep.fa  -outfmt 6 > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.ends_blast.tsv
+##create bed from nonredundant positions (used for plotting)
+echo "contig;start;end" | tr ';' '\t' > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.ends_blast.bed
+cat subtelomeric_repeats/${prefix}.manual_second.repeat_rep.ends_blast.tsv | awk '{if($3 > 80 && $4 > 500) print}' | awk '{print $2"\t"$9"\t"$10}' | awk '{if($2>$3) {print $1"\t"$3"\t"$2} else {print}}' | sort -k1,1 -k2,2n | bedtools merge -d 10  >> subtelomeric_repeats/${prefix}.manual_second.repeat_rep.ends_blast.bed
+##and the same now for the whole genome
+blastn  -subject assemblies/${prefix}.fa -query subtelomeric_repeats/${prefix}.manual_second.repeat_rep.fa  -outfmt 6 > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.WG_blast.tsv
+echo "contig;start;end" | tr ';' '\t' > subtelomeric_repeats/${prefix}.manual_second.repeat_rep.WG_blast.bed
+cat subtelomeric_repeats/${prefix}.manual_second.repeat_rep.WG_blast.tsv | awk '{if($3 > 80 && $4 > 500) print}' | awk '{print $2"\t"$9"\t"$10}' | awk '{if($2>$3) {print $1"\t"$3"\t"$2} else {print}}' | sort -k1,1 -k2,2n | bedtools merge -d 10 >> subtelomeric_repeats/${prefix}.manual_second.repeat_rep.WG_blast.bed
+
+##Now you can plot both side by side
+
+```
 
 ## How to look for known functional domains
 TLRFinder looks for the conserved region however the actual expressed portion of the repeat (generally a helicase) is only contained within the repeat <br/>
@@ -144,41 +146,47 @@ Notably, in [O'Donnell et al. 2025]() using TLRFinder we found several examples 
 
 This step requires you to download a large database of conserved domains in order to search against <br/>
 
-        ##first download the appropriate conserved domain library (https://pmc.ncbi.nlm.nih.gov/articles/PMC7378889/)
-        wget ftp://ftp.ncbi.nih.gov/pub/mmdb/cdd/little_endian/Cdd_LE.tar.gz
-        mkdir Cdd_LE
-        mv Cdd_LE.tar.gz Cdd_LE
-        cd Cdd_LE
-        tar -zxvf Cdd_LE.tar.gz
+```bash
 
-        ##also download a library to read the cdd index numbers
-        wget ftp://ftp.ncbi.nih.gov/pub/mmdb/cdd/cddid.tbl.gz
-        gunzip cddid.tbl.gz
-        cd ../
+##first download the appropriate conserved domain library (https://pmc.ncbi.nlm.nih.gov/articles/PMC7378889/)
+wget ftp://ftp.ncbi.nih.gov/pub/mmdb/cdd/little_endian/Cdd_LE.tar.gz
+mkdir Cdd_LE
+mv Cdd_LE.tar.gz Cdd_LE
+cd Cdd_LE
+tar -zxvf Cdd_LE.tar.gz
+
+##also download a library to read the cdd index numbers
+wget ftp://ftp.ncbi.nih.gov/pub/mmdb/cdd/cddid.tbl.gz
+gunzip cddid.tbl.gz
+cd ../
+
+```
 
 Then use rpstblastn to search against these domains with your representative TLR OR all TLRs found in your assembly dataset <br/>
 Here we are using the TLR representative for GCA030345115 <br/>
 We also just grab the top 5 for the blast results for looking at the function using the cdd index table (this can definitely be increased if necessary) 
 
-        sample="GCA030345115"
-        input="GCA030345115_TLRFinder_output/subtelomeric_repeats/GCA030345115.repeat_rep.fa"
-        ##alternatively if having used multiple assemblies with -al you could use the combined 'TLRFinder_output/repeat_representatives.fa' file which contains all TLR representatives from assemblies where it was found
-        tophits="5"
+```bash
 
-        ##get the outfmt 6 plus the actual sequence aigned in the query (our repeats)
-        rpstblastn -query ${input} -db Cdd_LE/Cdd -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qseq" > ${sample}.repeat_rep.rpsblast_output.txt 
+sample="GCA030345115"
+input="GCA030345115_TLRFinder_output/subtelomeric_repeats/GCA030345115.repeat_rep.fa"
+##alternatively if having used multiple assemblies with -al you could use the combined 'TLRFinder_output/repeat_representatives.fa' file which contains all TLR representatives from assemblies where it was found
+tophits="5"
+
+##get the outfmt 6 plus the actual sequence aigned in the query (our repeats)
+rpstblastn -query ${input} -db Cdd_LE/Cdd -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qseq" > ${sample}.repeat_rep.rpsblast_output.txt 
  
-        ##now take the best 5 hits for each representative
-        echo "repeat_representative;CDD;domain;title;description" | tr ';' '\t' > ${sample}.repeat_rep.rpsblast_output.besthit_description.tsv
-        grep '>' ${input} | sed 's/>//g' | while read rep
-        do
-        grep "${rep}" ${sample}.repeat_rep.rpsblast_output.txt | head -n${tophits}
-        done | while read line
-        do
-        cdd=$( echo "${line}" | cut -f2 | awk -F "|" '{print $3}' )
-        cdd2=$( grep ^${cdd} Cdd_LE/cddid.tbl | awk -F "\t" '{print "CDD:"$1"\t"$2"\t"$3"\t"$4}' )
-        echo "${line}" | awk -v cdd2="$cdd2" '{print $1"\t"cdd2}'
-        done  >> ${sample}.repeat_rep.rpsblast_output.besthit_description.tsv
+##now take the best 5 hits for each representative
+echo "repeat_representative;CDD;domain;title;description" | tr ';' '\t' > ${sample}.repeat_rep.rpsblast_output.besthit_description.tsv
+grep '>' ${input} | sed 's/>//g' | while read rep
+do
+    grep "${rep}" ${sample}.repeat_rep.rpsblast_output.txt | head -n${tophits}
+done | while read line
+do
+    cdd=$( echo "${line}" | cut -f2 | awk -F "|" '{print $3}' )
+    cdd2=$( grep ^${cdd} Cdd_LE/cddid.tbl | awk -F "\t" '{print "CDD:"$1"\t"$2"\t"$3"\t"$4}' )
+    echo "${line}" | awk -v cdd2="$cdd2" '{print $1"\t"cdd2}'
+done  >> ${sample}.repeat_rep.rpsblast_output.besthit_description.tsv
 
-
+```
 
