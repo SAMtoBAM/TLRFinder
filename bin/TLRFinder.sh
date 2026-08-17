@@ -316,7 +316,7 @@ fi
 echo "######### Adding results to summary file"
 
 ##sample = $prefix
-#assembly2=$( echo ${assembly2} )
+assembly2=$( echo ${assembly}  | awk -F "/" '{print $NF}' )
 assemblytype=$( echo ${assembly2} | awk -F "." '{if($NF == "gz" || $NF == "bgzip" || $NF == "gzip" ) {print "compressed"} else {print "uncompressed"}}' )
 contigs=$( if [[ $assemblytype == "uncompressed"  ]]; then grep '>' ${assemblypath} | wc -l ; else zgrep '>' ${assemblypath} | wc -l ; fi )
 telomericrepeats=$( if [ -e "telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed" ]; then cat telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed  |  awk '{if($3-$2 > 50) print $1}'  | wc -l ; else echo "0" ; fi )
