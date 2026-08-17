@@ -2,17 +2,17 @@
 #### script is designed to visualise the alignments of the ends of contigs in order to identify telomeric and Telomere-Linked-Repeats (TLRs)
 suppressMessages(suppressWarnings(library(gggenomes)))
 
-##get the regions of the HTR (+-50kb) bed file
-contigs=read.csv("contig_ends/SAMPLE.50kb_ends.bed", sep='\t', header=T)
+##get the regions of the HTR (+-TIPSIZE2kb) bed file
+contigs=read.csv("contig_ends/SAMPLE.TIPSIZE2kb_ends.bed", sep='\t', header=T)
 contigs$seq_id = contigs$contig
 contigs$length = contigs$end
 
 
 ##get the minimap2 paf file for the links
-links=suppressMessages(suppressWarnings(read_links("contig_ends_alignments/SAMPLE.50kb_ends.nucmer.paf")))
+links=suppressMessages(suppressWarnings(read_links("contig_ends_alignments/SAMPLE.TIPSIZE2kb_ends.nucmer.paf")))
 
 ##get the telomeric end positions
-telomeres=read.csv("telomeric_repeats/SAMPLE.50kb_ends.telomeres.bed", sep='\t' , header=T)
+telomeres=read.csv("telomeric_repeats/SAMPLE.TIPSIZE2kb_ends.telomeres.bed", sep='\t' , header=T)
 telomeres$seq_id = telomeres$contig
 telomeres$length= telomeres$end-telomeres$start
 telomeres$strand=telomeres$sense
@@ -41,7 +41,7 @@ ends=suppressMessages(suppressWarnings(print(gggenomes(seqs=contigs, links=subse
                                                geom_seq_label(hjust = 1.1, vjust = -0.1)+
                                                geom_variant(data=feats("telo"), shape=19, colour="black")+
                                                theme(legend.position = "top")+
-                                               coord_cartesian(xlim = c(-10000,50000)))))
+                                               coord_cartesian(xlim = c(-10000,TIPSIZE)))))
 
 
 widthFrac = max(contigs$length+100000) / 10000
@@ -69,7 +69,7 @@ ends_filtered=suppressMessages(suppressWarnings(print(gggenomes(seqs=contigs_fil
                                                         geom_seq_label(hjust = 1.1, vjust = -0.1)+
                                                         geom_variant(data=feats("telo"), shape=19, colour="black")+
                                                         theme(legend.position = "top")+
-                                                        coord_cartesian(xlim = c(-10000,50000)))))
+                                                        coord_cartesian(xlim = c(-10000,TIPSIZE)))))
 
 widthFrac = max(contigs_filtered$length+100000) / 10000
 #heightFrac = nrow(regionSeqs) / 2 # for default cases
