@@ -251,7 +251,10 @@ cat contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf  | awk '{if($
 
 ##get all regions with at least XX coverage and larger than XXkb
 ##to get the minimum coverage we could estimate this by taking the number of contigs with +50bp telomeric sequences found and want at least 75% that coverage (unless 0 then make it 4)
-goodtel=$( cat telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed  | awk '{if($3-$2 > 50) print}' | awk -F "\t" '{print $1}' | wc -l )
+##a 'good' telomere here is hard set to within 100bp of the end of the contigs (rough but needed for some filtering..)
+goodtel=$(awk -F '\t' -v tipsize="$tipsize" \
+    '($3-$2 > 50) && (($2 < 100 && $3 > 0) || ($2 < tipsize && $3 > tipsize-100)) {print $1}' \
+    telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed | wc -l)
 covmin=$( echo "${goodtel}" | awk -v covthreshold="$covthreshold" '{if($1 != "0") {print $1*covthreshold} else {print "4"}}' )
 ##size min set to 2kb as default 
 bedtools coverage -a contig_ends/${prefix}.${tipsize2}kb_ends.${window}bpwindow.bed -b contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf.bed > contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.cov.bed
@@ -305,7 +308,7 @@ echo "######### Plotting contig end alignments and genome-wide distribution"
 
 
 Rscriptpath=$( which Finderplots_TLRs.R )
-cat ${Rscriptpath} | sed "s/SAMPLE/${prefix}/g" > plotting_Rscripts/${prefix}.R
+cat ${Rscriptpath} | sed "s/SAMPLE/${prefix}/g" | sed "s/TIPSIZE2/${tipsize2}/g" | sed "s/TIPSIZE/${tipsize}/g" > plotting_Rscripts/${prefix}.R
 
 Rscript plotting_Rscripts/${prefix}.R
 
@@ -451,7 +454,10 @@ cat contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf  | awk '{if($
 
 ##get all regions with at least XX coverage and larger than XXkb
 ##to get the minimum coverage we could estimate this by taking the number of contigs with +50bp telomeric sequences found and want at least 75% that coverage (unless 0 then make it 4)
-goodtel=$( cat telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed  | awk '{if($3-$2 > 50) print}' | awk -F "\t" '{print $1}' | wc -l )
+##a 'good' telomere here is hard set to within 100bp of the end of the contigs (rough but needed for some filtering..)
+goodtel=$(awk -F '\t' -v tipsize="$tipsize" \
+    '($3-$2 > 50) && (($2 < 100 && $3 > 0) || ($2 < tipsize && $3 > tipsize-100)) {print $1}' \
+    telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed | wc -l)
 covmin=$( echo "${goodtel}" | awk -v covthreshold="$covthreshold" '{if($1 != "0") {print $1*covthreshold} else {print "4"}}' )
 ##size min set to 2kb as default 
 bedtools coverage -a contig_ends/${prefix}.${tipsize2}kb_ends.${window}bpwindow.bed -b contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf.bed > contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.cov.bed
@@ -504,7 +510,7 @@ echo "######### Plotting contig end alignments and genome-wide distribution"
 
 
 Rscriptpath=$( which Finderplots_TLRs.R )
-cat ${Rscriptpath} | sed "s/SAMPLE/${prefix}/g" > plotting_Rscripts/${prefix}.R
+cat ${Rscriptpath} | sed "s/SAMPLE/${prefix}/g" | sed "s/TIPSIZE2/${tipsize2}/g" | sed "s/TIPSIZE/${tipsize}/g" > plotting_Rscripts/${prefix}.R
 
 Rscript plotting_Rscripts/${prefix}.R
 
