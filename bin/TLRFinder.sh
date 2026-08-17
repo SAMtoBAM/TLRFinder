@@ -244,7 +244,7 @@ paftools.js delta2paf contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer
 
 
 ##make a bedfile in order to use for coverage analysis of the contig ends alignments
-cat contig_ends/${prefix}.${tipsize2}kb_ends.fa.fai | awk '{print $1"\t1\t"$2}' | bedtools makewindows -w 10 -s 5 -b - > contig_ends/${prefix}.${tipsize2}kb_ends.10bpwindow.bed
+cat contig_ends/${prefix}.${tipsize2}kb_ends.fa.fai | awk '{print $1"\t1\t"$2}' | bedtools makewindows -w ${window} -s ${slide} -b - > contig_ends/${prefix}.${tipsize2}kb_ends.${window}bpwindow.bed
 
 ##create a bed file from the alignments
 cat contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf  | awk '{if($3 > $4) {print $1"\t"$4"\t"$3} else {print $1"\t"$3"\t"$4}}' > contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf.bed
@@ -254,7 +254,7 @@ cat contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf  | awk '{if($
 goodtel=$( cat telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed  | awk '{if($3-$2 > 50) print}' | awk -F "\t" '{print $1}' | wc -l )
 covmin=$( echo "${goodtel}" | awk -v covthreshold="$covthreshold" '{if($1 != "0") {print $1*covthreshold} else {print "4"}}' )
 ##size min set to 2kb as default 
-bedtools coverage -a contig_ends/${prefix}.${tipsize2}kb_ends.10bpwindow.bed -b contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf.bed > contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.cov.bed
+bedtools coverage -a contig_ends/${prefix}.${tipsize2}kb_ends.${window}bpwindow.bed -b contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf.bed > contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.cov.bed
 echo "contig;start;end" | tr ';' '\t' > contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.repeats.bed
 cat contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.cov.bed | awk -v covmin="$covmin" '{if($4 > covmin) print}' | bedtools merge -d 10 | awk -v sizemin="$sizemin"  '{if($3-$2 > sizemin) print}' >> contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.repeats.bed
 
@@ -444,7 +444,7 @@ paftools.js delta2paf contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer
 
 
 ##make a bedfile in order to use for coverage analysis of the contig ends alignments
-cat contig_ends/${prefix}.${tipsize2}kb_ends.fa.fai | awk '{print $1"\t1\t"$2}' | bedtools makewindows -w 10 -s 5 -b - > contig_ends/${prefix}.${tipsize2}kb_ends.10bpwindow.bed
+cat contig_ends/${prefix}.${tipsize2}kb_ends.fa.fai | awk '{print $1"\t1\t"$2}' | bedtools makewindows -w ${window} -s ${slide} -b - > contig_ends/${prefix}.${tipsize2}kb_ends.${window}bpwindow.bed
 
 ##create a bed file from the alignments
 cat contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf  | awk '{if($3 > $4) {print $1"\t"$4"\t"$3} else {print $1"\t"$3"\t"$4}}' > contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf.bed
@@ -454,7 +454,7 @@ cat contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf  | awk '{if($
 goodtel=$( cat telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed  | awk '{if($3-$2 > 50) print}' | awk -F "\t" '{print $1}' | wc -l )
 covmin=$( echo "${goodtel}" | awk -v covthreshold="$covthreshold" '{if($1 != "0") {print $1*covthreshold} else {print "4"}}' )
 ##size min set to 2kb as default 
-bedtools coverage -a contig_ends/${prefix}.${tipsize2}kb_ends.10bpwindow.bed -b contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf.bed > contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.cov.bed
+bedtools coverage -a contig_ends/${prefix}.${tipsize2}kb_ends.${window}bpwindow.bed -b contig_ends_alignments/${prefix}.${tipsize2}kb_ends.nucmer.paf.bed > contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.cov.bed
 echo "contig;start;end" | tr ';' '\t' > contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.repeats.bed
 cat contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.cov.bed | awk -v covmin="$covmin" '{if($4 > covmin) print}' | bedtools merge -d 10 | awk -v sizemin="$sizemin"  '{if($3-$2 > sizemin) print}' >> contig_ends_coverage/${prefix}.${tipsize2}kb_ends.nucmer.paf.repeats.bed
 
