@@ -208,10 +208,10 @@ done > contig_ends/${prefix}.${tipsize2}kb_ends.fa
 ##can also label all regions with the canonical telomeric repeat
 ##use seqkit to locate the position of the canonical repeat then merge all those locations with a buffer of 7bp incase one repeat is off and export a bed file
 echo "contig;start;end;sense" | tr ';' '\t' > telomeric_repeats/${prefix}.telomeres.bed
-seqkit locate --quiet --ignore-case -p "TTAGGG" ${assembly} | tail -n+2 | awk '{print $1"\t"$5"\t"$6"\t"$4}' | sort -k1,1 -k2,2n | bedtools merge -d 7 -c 4 -o distinct -i - | awk '{if($3-$2 > 11) print}' | awk -F "," '{print $1}' >> telomeric_repeats/${prefix}.telomeres.bed
+seqkit locate -j ${threads} --ignore-case -r -p "\"${telomererepeat}\""  ${assembly} | tail -n+2 | awk '{print $1"\t"$5"\t"$6"\t"$4}' | sort -k1,1 -k2,2n | bedtools merge -d 7 -c 4 -o distinct -i - | awk '{if($3-$2 > 11) print}' | awk -F "," '{print $1}' >> telomeric_repeats/${prefix}.telomeres.bed
 
 echo "contig;start;end;sense" | tr ';' '\t' > telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed
-seqkit locate --quiet --ignore-case -p "TTAGGG" contig_ends/${prefix}.${tipsize2}kb_ends.fa | tail -n+2 | awk '{print $1"\t"$5"\t"$6"\t"$4}' | sort -k1,1 -k2,2n | bedtools merge -d 7 -c 4 -o distinct -i - | awk '{if($3-$2 > 11) print}' | awk -F "," '{print $1}' >> telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed
+seqkit locate -j ${threads} --ignore-case -r -p "\"${telomererepeat}\""  contig_ends/${prefix}.${tipsize2}kb_ends.fa | tail -n+2 | awk '{print $1"\t"$5"\t"$6"\t"$4}' | sort -k1,1 -k2,2n | bedtools merge -d 7 -c 4 -o distinct -i - | awk '{if($3-$2 > 11) print}' | awk -F "," '{print $1}' >> telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed
 
 ##subset the ends to only those with a good telomere sequence (>50bp)
 #cat telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed  | awk '{if($3-$2 > 50) print $1}' > contig_ends/${prefix}.${tipsize2}kb_ends.with_tel.txt
@@ -408,10 +408,10 @@ done > contig_ends/${prefix}.${tipsize2}kb_ends.fa
 ##can also label all regions with the canonical telomeric repeat
 ##use seqkit to locate the position of the canonical repeat then merge all those locations with a buffer of 7bp incase one repeat is off and export a bed file
 echo "contig;start;end;sense" | tr ';' '\t' > telomeric_repeats/${prefix}.telomeres.bed
-seqkit locate --quiet --ignore-case -p "TTAGGG" ${assembly} | tail -n+2 | awk '{print $1"\t"$5"\t"$6"\t"$4}' | sort -k1,1 -k2,2n | bedtools merge -d 7 -c 4 -o distinct -i - | awk '{if($3-$2 > 11) print}' | awk -F "," '{print $1}' >> telomeric_repeats/${prefix}.telomeres.bed
+seqkit locate -j ${threads} --ignore-case -r -p "\"${telomererepeat}\""  ${assembly} | tail -n+2 | awk '{print $1"\t"$5"\t"$6"\t"$4}' | sort -k1,1 -k2,2n | bedtools merge -d 7 -c 4 -o distinct -i - | awk '{if($3-$2 > 11) print}' | awk -F "," '{print $1}' >> telomeric_repeats/${prefix}.telomeres.bed
 
 echo "contig;start;end;sense" | tr ';' '\t' > telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed
-seqkit locate --quiet --ignore-case -p "TTAGGG" contig_ends/${prefix}.${tipsize2}kb_ends.fa | tail -n+2 | awk '{print $1"\t"$5"\t"$6"\t"$4}' | sort -k1,1 -k2,2n | bedtools merge -d 7 -c 4 -o distinct -i - | awk '{if($3-$2 > 11) print}' | awk -F "," '{print $1}' >> telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed
+seqkit locate -j ${threads} --ignore-case -r -p "\"${telomererepeat}\""  contig_ends/${prefix}.${tipsize2}kb_ends.fa | tail -n+2 | awk '{print $1"\t"$5"\t"$6"\t"$4}' | sort -k1,1 -k2,2n | bedtools merge -d 7 -c 4 -o distinct -i - | awk '{if($3-$2 > 11) print}' | awk -F "," '{print $1}' >> telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed
 
 ##subset the ends to only those with a good telomere sequence (>50bp)
 #cat telomeric_repeats/${prefix}.${tipsize2}kb_ends.telomeres.bed  | awk '{if($3-$2 > 50) print $1}' > contig_ends/${prefix}.${tipsize2}kb_ends.with_tel.txt
